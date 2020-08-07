@@ -10,7 +10,6 @@ class LineSplitStream extends stream.Transform {
   }
 
   _transform(chunk, encoding, callback) {
-    console.log(chunk.toString());
     chunk.toString().split(os.EOL).forEach((item, i, arr) => {
       if (arr.length === 1) {
         this._buffer += item;
