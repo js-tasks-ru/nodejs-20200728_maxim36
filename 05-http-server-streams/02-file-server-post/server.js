@@ -36,7 +36,9 @@ const handlers = {
     });
 
     writableStream.on('error', (err) => {
-      console.log(err);
+      fileSizeControl.destroy();
+      res.statusCode = 500;
+      res.end('Server error');
     });
 
     req.on('abort', () => {
@@ -47,13 +49,17 @@ const handlers = {
     })
 
     fileSizeControl.on('error', (err) => {
-      res.statusCode = 413;
-      res.end('Payload too large');
       fileSizeControl.destroy();
-      req.destroy();
       writableStream.destroy();
+      req.socket.end();
       fs.unlink(filepath, (err) => {
-        if (err) console.log(err);
+        if (err) {
+          res.statusCode = 500;
+          res.end('Server error');
+        } else {
+          res.statusCode = 413;
+          res.end('Payload too large');
+        }
       })
     });
   }
