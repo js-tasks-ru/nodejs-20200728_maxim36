@@ -36,6 +36,7 @@ const handlers = {
     });
 
     writableStream.on('error', (err) => {
+      console.log(err);
       fileSizeControl.destroy();
       fs.unlink(filepath, (err) => {
         res.statusCode = 500;
@@ -43,7 +44,7 @@ const handlers = {
       })
     });
 
-    req.on('abort', () => {
+    req.on('close', () => {
       writableStream.destroy();
       fileSizeControl.destroy();
       fs.unlink(filepath, (err) => {
