@@ -51,7 +51,6 @@ const handlers = {
     fileSizeControl.on('error', (err) => {
       fileSizeControl.destroy();
       writableStream.destroy();
-      req.socket.end();
       fs.unlink(filepath, (err) => {
         if (err) {
           res.statusCode = 500;
