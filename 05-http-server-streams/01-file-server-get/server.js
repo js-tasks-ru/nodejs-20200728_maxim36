@@ -3,29 +3,23 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
-const hasFile = (filepath) => {
-  return new Promise((resolve) => {
-    fs.access(filepath, (err) => {
-      console.log(err);
-      if (err) resolve(false);
-      else resolve(true);
-    })
-  })
-}
-
 const handlers = {
   async GET(res, filepath) {
-    const fileExist = await hasFile(filepath);
-    if (!fileExist) {
-      res.statusCode = 404;
-      res.end('Not fuond');
-      return;
-    };
     const fileStream = fs.createReadStream(filepath, {encoding: 'utf8'});
     fileStream.pipe(res).on('error', (err) => {
       res.statusCode = 500;
       res.end('Server error');
     });
+
+    fileStream.on('error', (error) => {
+      if (error.code === 'ENOENT') {
+        res.statusCode = 404;
+        res.end('Not fuond');
+      } else {
+        res.statusCode = 500;
+        res.end('Server error');
+      }
+    })
   }
 }
 
