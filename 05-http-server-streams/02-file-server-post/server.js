@@ -37,12 +37,15 @@ const handlers = {
 
     writableStream.on('error', (err) => {
       fileSizeControl.destroy();
-      res.statusCode = 500;
-      res.end('Server error');
+      fs.unlink(filepath, (err) => {
+        res.statusCode = 500;
+        res.end('Server error');
+      })
     });
 
     req.on('abort', () => {
       writableStream.destroy();
+      fileSizeControl.destroy();
       fs.unlink(filepath, (err) => {
         res.end('Connetction closed');
       })
