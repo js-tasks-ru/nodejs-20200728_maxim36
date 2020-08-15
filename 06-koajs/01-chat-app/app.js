@@ -16,13 +16,13 @@ const waiter = (ctx) => {
         if (!message) ctx.body = ''
         else ctx.body = message;
         commonResolve();
-    }
+    };
 
     const throttel = () => {
         return new Promise( (resolve) => {
             commonResolve = resolve;
         })
-    }
+    };
     return [starter, throttel];
 }
 
