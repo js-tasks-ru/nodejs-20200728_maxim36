@@ -44,8 +44,9 @@ const handlers = {
     });
 
     req.on('close', () => {
-      writableStream.destroy();
       fileSizeControl.destroy();
+      if (res.writableFinished) return;
+      writableStream.destroy();
       fs.unlink(filepath, (err) => {
         res.end('Connetction closed');
       })
